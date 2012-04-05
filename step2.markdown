@@ -155,7 +155,7 @@ To save data to a Deployd collection, you send a `POST` request to the same URL.
     Status: 200 OK
     {"_id":"4f7dd6ea7696253010000077","name":"Fred","comment":"What's up?"}
 
-If you load the page now, you should be able to submit a comment that appears even after you refresh.
+If you load the page now, you should be able to submit a comment that appears even after you refresh. Also, if you forget to enter a name (or a comment), you will receive an error message.
 
 This would be a good time to reupload your HTML and JavaScript to your Files resource so that the latest version is on the server.
 
