@@ -1,0 +1,109 @@
+<h1>Step 1 - Uploading your app to Deployd</h1>
+
+<p>Start by creating an HTML page. Call it <code>index.html</code>:</p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Deployd Tutorial&lt;/title&gt;
+  &lt;link href="style.css" rel="stylesheet" type="text/css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;div id="comments"&gt;
+    &lt;/div&gt;
+    &lt;form id="comment-form"&gt;
+      &lt;div class="form-element"&gt;
+        &lt;label for="name"&gt;Name: &lt;/label&gt;
+        &lt;input type="text" id="name" name="name" /&gt;
+      &lt;/div&gt;
+      &lt;div class="form-element"&gt;
+        &lt;textarea id="comment" name="comment" rows="5" cols="50"&gt;&lt;/textarea&gt;
+      &lt;/div&gt;
+      &lt;div class="form-element"&gt;
+        &lt;button type="submit"&gt;Add New Comment&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+
+  &lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>So that this demo will be easier on the eyes, include a simple stylesheet as well. Call it <code>style.css</code>:</p>
+
+<pre><code>body { font-size: 16pt; }
+.container { width: 960px; margin-left: auto; margin-right: auto; }
+form { border: #cccccc 1px solid; padding: 20px; margin-bottom: 10px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
+.form-element { margin-bottom: 10px; }
+#refresh-btn { margin-bottom: 20px; }
+.comment { padding: 10px; margin-bottom: 10px; border-bottom: #cccccc 1px solid; }
+.comment .links { float: right; }
+.comment .links a { margin-left: 10px; }
+.comment .author { font-style: italic; }
+</code></pre>
+
+<p>Finally, add some jQuery to allow users to add comments in <code>script.js</code>. Take a moment to understand how this works; you will build on this in later steps.</p>
+
+<pre><code>$(document).ready(function() {
+
+  $('#comment-form').submit(function() {
+    //Get the data from the form
+    var name = $('#name').val();
+    var comment = $('#comment').val();
+
+    //Clear the form elements
+    $('#name').val('');
+    $('#comment').val('');
+
+    addComment({
+      name: name,
+      comment: comment
+    });
+
+    return false;
+  });
+
+  function addComment(comment) {
+    $('&lt;div class="comment"&gt;')
+      .append('&lt;div class="author"&gt;Posted by: ' + comment.name + '&lt;/div&gt;')
+      .append('&lt;p&gt;' + comment.comment + '&lt;/p&gt;')
+      .appendTo('#comments')
+    ;
+  }
+
+});
+</code></pre>
+
+<p>Open up the page in your browser to test it. Enter a name and comment, then click the "Add New Comment" button.</p>
+
+<p><img src="step1img/screenshot01.png" alt="App preview" title="" /></p>
+
+<h2>Uploading your app to Deployd</h2>
+
+<p>At this point, you've got a working web app. It would be nice to upload it to the web so that other people can see it. </p>
+
+<p>Go into your Deployd app Dashboard:</p>
+
+<p><img src="step1img/screenshot02.png" alt="Empty dashboard" title="" /></p>
+
+<p>Your Deployd app is made of <em>Resources</em>. These resources could be a collection of saved data, a list of users, or static files. Right now we want our server to host files, so drag a "Files" resource onto your app:</p>
+
+<p><img src="step1img/screenshot03.png" alt="Adding a resource" title="" /></p>
+
+<p>Name your resource <code>/</code>. Deployd uses these resource names to identify which resource should serve a request. If you left it at the default name <code>/my-files</code>, you would have to use that path to request a file (i.e. <code>http://myapp.deploydapp.com/my-files/index.html</code>). 
+By using <code>/</code> as a resource name, Deployd will know that any request at the root URL of your app is a file. (i.e. <code>http://myapp.deploydapp.com/index.html</code>)</p>
+
+<p><img src="step1img/screenshot04.png" alt="Naming a resource" title="" /></p>
+
+<p>Click "save" once you have named the resource, then click on the resource to enter the detail view.</p>
+
+<p><img src="step1img/screenshot05.png" alt="Empty Files screen" title="" /></p>
+
+<p>Click the "Add Files" button and navigate to the folder on your computer where you have saved your app. Select <code>index.html</code>, <code>style.css</code>, and <code>script.js</code>, then click OK.</p>
+
+<p><img src="step1img/screenshot06.png" alt="Files screen after uploading" title="" /></p>
+
+<p>That's it! Your app is on the web. Click on <code>index.html</code> to test it out. Now anybody can access the app if you give them the link.</p>
