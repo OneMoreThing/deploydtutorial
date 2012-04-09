@@ -88,3 +88,111 @@ if (this.comment.indexOf('pizza') !== -1) {
 </code></pre>
 
 <p><img src="step4img/screenshot04.png" alt="Showing age on comments" title="" /></p>
+
+<p>You should also add the following to your <code>PUT</code> event, for security:</p>
+
+<pre><code>protect('timestamp');
+protect('age');
+</code></pre>
+
+<p>With those updates, your script.js should look like this:</p>
+
+<pre><code>function url(path) {
+  return 'http://localhost:2403' + path;
+}
+
+function showError(xhr) {
+  alert(xhr.responseText);
+}
+
+$(document).ready(function() {
+
+  loadComments();
+  $('#refresh-btn').click(loadComments);
+
+  $('#comment-form').submit(function() {
+    //Get the data from the form
+    var name = $('#name').val();
+    var comment = $('#comment').val();
+
+    $.ajax(url('/comments'), {
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        name: name,
+        comment: comment
+      }),
+      success: function(result) {
+        addComment(result);
+
+        $('#name').val('');
+        $('#comment').val('');
+      },
+      error: showError
+    });
+
+    return false;
+  });
+
+  function addComment(comment) {
+    var editLink = $('&lt;a href="#"&gt;edit&lt;/a&gt;');
+    var deleteLink = $('&lt;a href="#"&gt;delete&lt;/a&gt;');
+
+    var div = $('&lt;div class="comment"&gt;')
+      .append($('&lt;div class="links"&gt;').append(editLink).append(deleteLink))
+      .append('&lt;div class="author"&gt;Posted by: ' + comment.name + '&lt;/div&gt;')
+      .append('&lt;p&gt;' + comment.comment + '&lt;/p&gt;')
+      .appendTo('#comments')
+    ;
+
+    if (comment.age &lt; 100) {
+      div.append('&lt;div class="author"&gt;' + comment.age.toFixed(0) + ' seconds ago&lt;/div&gt;');
+    } else {
+      var date = new Date(comment.timestamp).toLocaleDateString();
+      div.append('&lt;div class="author"&gt;on ' + date + '&lt;/div&gt;');  
+    }
+
+
+    deleteLink.click(function() {
+      $.ajax(url('/comments/' + comment._id), {
+        type: "DELETE",
+        success: function() {
+          div.remove();
+        },
+        error: showError
+      });
+
+      return false;
+    });
+
+    editLink.click(function() {
+      var newComment = prompt("Enter the new comment text:", comment.comment);
+      $.ajax(url('/comments/' + comment._id), {
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify({
+          name: comment.name,
+          comment: newComment
+        }),
+        success: function(result) {
+          div.find('p').text(result.comment);
+        },
+        error: showError
+      });
+
+      return false;
+    });
+  }
+
+  function loadComments() {
+    $.get(url('/comments'), function(result) { //Use jQuery AJAX to send a request to the server
+      var result = result || []; //If it's null, replace with an empty array
+      $('#comments').empty(); //Empty the collection
+      result.forEach(function(comment) { //Loop through the result
+        addComment(comment); //Add it to the array.
+      });
+    });
+  }
+
+});
+</code></pre>
