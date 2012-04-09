@@ -1,0 +1,90 @@
+<h1>Step 4: Adding events to the collection</h1>
+
+<p>The comment app has a major problem: you can submit pretty much anything as a comment. Even if you don't want to implement a word filter, you still might not want users to post links or HTML, which could create a security vulnerability on your site. Essentially, the app needs more advanced validation. You could write this validation into the app, but hackers could use the REST interface to post data directly to the server.</p>
+
+<p>Deployd allows you to write event handlers for collection data in JavaScript. You can use these events for validation, calculation, and security. </p>
+
+<p>Go to the dashboard, click on your <code>/comments</code> collection, and go to the "POST" tab in the "Events" panel. </p>
+
+<p><img src="step4img/screenshot01.png" alt="Events panel" title="" /></p>
+
+<p>Enter the following code:</p>
+
+<pre><code>if (this.comment.indexOf('pizza') !== -1) {
+  error('comment', "You're making me hungry")
+}
+
+if (this.name === 'Frank') {
+  error('name', "Stop spamming my app, Frank!");
+}
+</code></pre>
+
+<p>In a Collection event, the <code>this</code> object represents the current object. You can use it to access properties.</p>
+
+<p>To see this in action, try submitting a comment to your app that contains the word "pizza" or is submitted by "Frank". You should see the following error message:</p>
+
+<pre><code>{"errors":{"comment":"You're making me hungry","name":"Stop spamming my app, Frank!"}}
+</code></pre>
+
+<p>Errors are returned as JSON, just like an object. In a full app, you could use this to place the error messages at intuitive places in your UI.</p>
+
+<p>Of course, you could post a comment and then edit it later to mention pizza. Add this code to the PUT event:</p>
+
+<pre><code>protect('name');
+
+if (this.comment.indexOf('pizza') !== -1) {
+  error('comment', "You're making me hungry")
+}
+</code></pre>
+
+<p>The <code>protect()</code> method stops the client from changing that property. The app doesn't allow you to change the name in the UI, but remember that anybody can use the REST interface. To protect your users, you have to make sure that a REST client can't do anything that the app itself can't do.</p>
+
+<h2>Automatic properties</h2>
+
+<p>It would be nice to show how old a comment is. Add an <strong>Optional</strong> <strong>number</strong> property to the <code>/comments</code> collection and call it <code>timestamp</code>. Add the following to your <code>POST</code> event:</p>
+
+<pre><code>this.timestamp = new Date().getTime();
+</code></pre>
+
+<p>If you add a comment now in the data table, you should see a long number appear in the "timestamp" column. You can use this in the front-end Javascript:</p>
+
+<pre><code>function addComment(comment)) {
+  //...
+
+  var date = new Date(comment.timestamp).toLocaleDateString();
+  div.append('&lt;div class="author"&gt;on ' + date + '&lt;/div&gt;');
+
+  // ...
+}
+</code></pre>
+
+<p><strong>NOTE</strong>: Any comments that were created before this step will show "Invalid Date". This is normal, because their timestamp property is null. </p>
+
+<p><img src="step4img/screenshot02.png" alt="Showing dates on comments" title="" /></p>
+
+<p>Maybe you'd rather show how old the comment is, rather than the date it was posted, if it's relatively new. Add a new <strong>Optional</strong> <strong>number</strong> property to the collection and call it <code>age</code>. Add the following to your <code>GET</code> event:</p>
+
+<pre><code>this.age = (new Date() - this.timestamp) / 1000;
+</code></pre>
+
+<p>You should now see the age column updated in real-time on the data table.</p>
+
+<p><img src="step4img/screenshot03.png" alt="Updating age property" title="" /></p>
+
+<p>You can use this on the front end, too:</p>
+
+<pre><code>function addComment(comment)) {
+  //...
+
+  if (comment.age &lt; 100) {
+    div.append('&lt;div class="author"&gt;' + comment.age.toFixed(0) + ' seconds ago&lt;/div&gt;');
+  } else {
+    var date = new Date(comment.timestamp).toLocaleDateString();
+    div.append('&lt;div class="author"&gt;on ' + date + '&lt;/div&gt;');  
+  }
+
+  //...
+}
+</code></pre>
+
+<p><img src="step4img/screenshot04.png" alt="Showing age on comments" title="" /></p>
