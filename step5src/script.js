@@ -55,7 +55,7 @@ $(document).ready(function() {
 
   $('#logout-btn').click(function() {
     $.ajax(url('/users/logout'), {
-      type: "DELETE",
+      type: "POST",
       success: function() {
         currentUser = null;
         $('#login-form').show();

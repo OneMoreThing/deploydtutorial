@@ -137,11 +137,11 @@ function showUser(user) {
 
 <p>This is a POST to <code>/users/login</code> with the properties <code>email</code> and <code>password</code>. This is an action route; instead of creating a user like a normal POST, it will authenticate a user and cause subsequent <code>/users/me</code> requests to return that user.</p>
 
-<p>Finally, add a log out event handler:</p>
+<p>Finally, add a log out event handler that POSTs to <code>users/logout</code>:</p>
 
 <pre><code>$('#logout-btn').click(function() {
   $.ajax(url('/users/logout'), {
-    type: "DELETE",
+    type: "POST",
     success: function() {
       currentUser = null;
       $('#login-form').show();

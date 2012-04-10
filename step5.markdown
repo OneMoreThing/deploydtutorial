@@ -129,11 +129,11 @@ This uses the special `/users/me` route, which returns the current user. To have
 
 This is a POST to `/users/login` with the properties `email` and `password`. This is an action route; instead of creating a user like a normal POST, it will authenticate a user and cause subsequent `/users/me` requests to return that user.
 
-Finally, add a log out event handler:
+Finally, add a log out event handler that POSTs to `users/logout`:
 
     $('#logout-btn').click(function() {
       $.ajax(url('/users/logout'), {
-        type: "DELETE",
+        type: "POST",
         success: function() {
           currentUser = null;
           $('#login-form').show();
