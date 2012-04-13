@@ -68,7 +68,7 @@ Inside your `$(document).ready` callback, add a `loadComments()` function and ca
       }
     });
 
-Notice that you don't have to use a special SDK to retreive data from a Deployd server. This tutorial uses jQuery to make things simpler, but you can use any method making AJAX requests. In fact, you could create an iPhone, Android, or other mobile app that uses the same routes!
+Notice that you don't have to use a special SDK to retreive data from a Deployd server. This tutorial uses jQuery to make things simpler, but you can use any method of making AJAX requests. In fact, you could create an iPhone, Android, or other mobile app that uses the same routes!
 
 If you'd like, add a "Refresh" button to the app, too:
 

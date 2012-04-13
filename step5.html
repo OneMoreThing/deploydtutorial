@@ -2,11 +2,48 @@
 
 <p>This app allows users to edit and delete comments, but there's no security - anybody can edit or delete anybody else's comment. Needless to say, this app could get chaotic very quickly. A user should have to sign up and login before posting anything, and they should only be able to edit and delete their own comments.</p>
 
-<p>In the dashboard, create a new <strong>Users Collection</strong>; leave it at its default name of <code>/users</code>. Edit the collection and add a single <strong>string</strong> called <code>name</code>. Notice that the Users Collection comes with the <code>email</code> and <code>password</code> properties. Add a call to <code>cancel("Not yet supported")</code> in the <code>PUT</code> and <code>DELETE</code> events - the UI to edit your profile or delete your account can come later.</p>
+<p>In the dashboard, create a new <strong>Users Collection</strong>; leave it at its default name of <code>/users</code>. Edit the collection and add a single <strong>string</strong> called <code>name</code>. Notice that the Users Collection comes with the <code>email</code> and <code>password</code> properties.</p>
+
+<p>Add a call to <code>cancel("Not yet supported")</code> in the <code>PUT</code> and <code>DELETE</code> events. The <code>cancel()</code> function causes a request to halt with a specified error message. This is useful for security. In this case, there is no UI to edit or delete users, so you don't want that to be available over the REST API.</p>
 
 <p>On the front-end, you'll have to create a new page to allow users to register. Add <code>register.html</code>:</p>
 
-<pre><code>[register.html]
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Deployd Tutorial - Register User&lt;/title&gt;
+  &lt;link href="style.css" rel="stylesheet" type="text/css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;a href="index.html"&gt;Back to comments&lt;/a&gt;
+    &lt;form id="user-form"&gt;
+      &lt;div class="form-element"&gt;
+        &lt;label for="email"&gt;Email&lt;/label&gt;
+        &lt;input type="email" id="email" name="email"/&gt;
+      &lt;/div&gt;
+      &lt;div class="form-element"&gt;
+        &lt;label for="name"&gt;Name&lt;/label&gt;
+        &lt;input type="text" id="name" name="name"/&gt;
+      &lt;/div&gt;
+      &lt;div class="form-element"&gt;
+        &lt;label for="password"&gt;Password&lt;/label&gt;
+        &lt;input type="password" id="password" name="password"/&gt;
+      &lt;/div&gt;
+      &lt;div class="form-element"&gt;
+        &lt;label for="password-confirm"&gt;Confirm Password&lt;/label&gt;
+        &lt;input type="password" id="password-confirm" name="password-confirm"/&gt;
+      &lt;/div&gt;
+
+      &lt;button type="submit"&gt;Register&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+  &lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+  &gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="utils.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="register.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 </code></pre>
 
 <p>Also, take the <code>url()</code> and <code>showError</code> functions out of <code>script.js</code> and move them into a new file called <code>utils.js</code> so we can re-use them on both pages:</p>
@@ -65,21 +102,20 @@ function showError(xhr) {
 
 <h2>Logging in</h2>
 
-<p>Add this markup near the top of <code>index.html</code>:</p>
+<p>Add this markup above the comments div in <code>index.html</code>:</p>
 
 <pre><code>&lt;!-- ... --&gt;
-&lt;div class="container"&gt;
   &lt;form id="login-form"&gt;
-      &lt;input type="email" placeholder="Email" id="email" name="email" /&gt;
-      &lt;input type="password" placeholder="********" id="password" name="password" /&gt;
-      &lt;button type="submit"&gt;Login&lt;/button&gt;
-      &lt;a href="register.html"&gt;Sign up&lt;/a&gt;
-    &lt;/form&gt;
-    &lt;div id="greeting"&gt;
-      &lt;h3&gt;&lt;/h3&gt;
-      &lt;a href="#" id="logout-btn"&gt;Log out&lt;/a&gt;
-    &lt;/div&gt;
-    &lt;!-- ... --&gt;
+    &lt;input type="email" placeholder="Email" id="email" name="email" /&gt;
+    &lt;input type="password" placeholder="********" id="password" name="password" /&gt;
+    &lt;button type="submit"&gt;Login&lt;/button&gt;
+    &lt;a href="register.html"&gt;Sign up&lt;/a&gt;
+  &lt;/form&gt;
+  &lt;div id="greeting"&gt;
+    &lt;h3&gt;&lt;/h3&gt;
+    &lt;a href="#" id="logout-btn"&gt;Log out&lt;/a&gt;
+  &lt;/div&gt;
+&lt;!-- ... --&gt;
 </code></pre>
 
 <p>Add the following to the top of <code>$(document).ready</code> in <code>script.js</code>:</p>
@@ -154,7 +190,55 @@ function showUser(user) {
 });
 </code></pre>
 
-<p>Users shouldn't enter their names on comments anymore; it should be the name they entered while signing up. Remove the field from <code>index.html</code>:</p>
+<p><strong>NOTE</strong>: A web page on the filesystem will not hold a session. You won't be able to test this version of the app until you upload it to Deployd. Alternatively, an advanced user can set up a simple server to serve the files as <em>localhost</em>.</p>
+
+<h2>Security with users</h2>
+
+<p>Now that a user can register and log in, comments have to be secured so that only logged in users can post them. In the Deployd dashboard, go back to the <code>/comments</code> resource.</p>
+
+<p><code>name</code> will be an automatic property now, so make it <strong>Optional</strong>.</p>
+
+<p>Add a new <strong>Optional</strong> <strong>string</strong> called <code>creator</code>.</p>
+
+<p>At the top of your <code>POST</code> event, add the following:</p>
+
+<pre><code>if (me) {
+    this.creator = me._id;
+    this.name = me.name;
+} else {
+    cancel("You must be logged in to post a comment");
+}
+</code></pre>
+
+<p><code>me</code> is a special object that represents the current user. If the current user is not logged in, <code>me</code> will be undefined.</p>
+
+<p>Because <code>name</code> is now an automatic property, make it optional.</p>
+
+<p>Wrap your <code>PUT</code> event in the following if statement:</p>
+
+<pre><code>if (me &amp;&amp; me._id == this.creator) {
+   // ...
+} else {
+    cancel("This is not your comment!");
+}
+</code></pre>
+
+<p>In addition, take this opportunity to protect all the properties except <code>comment</code> in <code>PUT</code>:</p>
+
+<pre><code>protect('creator');
+protect('name');
+protect('timestamp');
+protect('age');
+</code></pre>
+
+<p>Add a similar <code>DELETE</code> event: </p>
+
+<pre><code>if (!(me &amp;&amp; me._id == this.creator)) {
+   cancel("This is not your comment!");
+}
+</code></pre>
+
+<p>On the front-end, users shouldn't enter their names on comments anymore; it should be the name they entered while signing up. Remove the field from <code>index.html</code>:</p>
 
 <pre><code>&lt;div class="form-element"&gt;
   &lt;label for="name"&gt;Name: &lt;/label&gt;
@@ -185,41 +269,6 @@ function showUser(user) {
 });
 </code></pre>
 
-<p><strong>NOTE</strong>: A web page on the filesystem will not hold a session. You won't be able to test this version of the app until you upload it to Deployd. Alternatively, if you are an advanced user, you can set up a quick web server on your computer to serve the files as <em>localhost</em>.</p>
+<p><img src="step5img/screenshot02.png" alt="Final app" title="" /></p>
 
-<h2>Security with users</h2>
-
-<p>Now that a user can register and log in, comments have to be secured so that only logged in users can post them. In the Deployd dashboard, go back to the <code>/comments</code> resource.</p>
-
-<p><code>name</code> will be an automatic property now, so make it <strong>Optional</strong>.</p>
-
-<p>Add a new <strong>Optional</strong> <em>*string</em> called <code>creator</code>.</p>
-
-<p>At the top of your <code>POST</code> event, add the following:</p>
-
-<pre><code>if (me) {
-    this.creator = me._id;
-    this.name = me.name;
-} else {
-    cancel("You must be logged in to post a comment");
-}
-</code></pre>
-
-<p><code>me</code> is a special object that represents the current user. If the current user is not logged in, <code>me</code> will be undefined.</p>
-
-<p>Wrap your <code>PUT</code> and <code>DELETE</code> events in the following if statement:</p>
-
-<pre><code>if (me &amp;&amp; me._id == this.creator) {
-   // ...
-} else {
-    cancel("This is not your comment!");
-}
-</code></pre>
-
-<p>In addition, take this opportunity to protect all the properties except <code>comment</code> in <code>PUT</code>:</p>
-
-<pre><code>protect('creator');
-protect('name');
-protect('timestamp');
-protect('age');
-</code></pre>
+<p>Congratulations, you've now built a working app with a Deployd backend! For more information, check out the <a href="http://deployd.github.com/deployd/">Deployd documentation</a> for a full reference of what you can do. Good luck!</p>

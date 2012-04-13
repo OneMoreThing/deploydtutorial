@@ -6,21 +6,23 @@
 
 <h2>Creating a Collection</h2>
 
-<p>Go to the dashboard and add a new <strong>Collection</strong> resource. Name it <code>/comments</code>.</p>
+<p>Go to the dashboard. If you are still on the Files view, click on the "Resources" tab to go back to the main screen. </p>
 
-<p><img src="step2img/screenshot01.png" alt="New resource" title="" /></p>
+<p><img src="step2img/screenshot01.png" alt="Back to Resources" title="" /></p>
 
-<p><img src="step2img/screenshot02.png" alt="Collection resource" title="" /></p>
+<p>Add a new <strong>Collection</strong> resource. Name it <code>/comments</code>.</p>
+
+<p><img src="step2img/screenshot02.png" alt="New resource" title="" /></p>
+
+<p><img src="step2img/screenshot03.png" alt="Collection resource" title="" /></p>
 
 <p>In order to use a collection, you have to define what its objects will look like. In this app, you have to a save a name and a comment, which are both text. </p>
 
 <p>Drag a <strong>string</strong> onto the Properties panel, just like adding a resource. Call it <code>name</code>. Leave "Optional" unchecked.</p>
 
-<p><img src="step2img/screenshot03.png" alt="Adding a property" title="" /></p>
+<p><img src="step2img/screenshot04.png" alt="Adding a property" title="" /></p>
 
 <p>Do the same thing to add another string called <code>comment</code>. Notice that the grid on the bottom of the screen has updated to include those properties.</p>
-
-<p><img src="step2img/screenshot04.png" alt="Final schema" title="" /></p>
 
 <p>Click the "Add" button on the grid. Type in a name and comment, then click "done".</p>
 
@@ -67,7 +69,7 @@ $(document).ready(function() {
 });
 </code></pre>
 
-<p>Notice that you don't have to use a special SDK to retreive data from a Deployd server. This tutorial uses jQuery to make things simpler, but you can use a standard XMLHTTPRequest object in vanilla JavaScript with the same effect.</p>
+<p>Notice that you don't have to use a special SDK to retreive data from a Deployd server. This tutorial uses jQuery to make things simpler, but you can use any method of making AJAX requests. In fact, you could create an iPhone, Android, or other mobile app that uses the same routes!</p>
 
 <p>If you'd like, add a "Refresh" button to the app, too:</p>
 
@@ -79,7 +81,6 @@ $(document).ready(function() {
 
 &lt;button id="refresh-btn"&gt;Refresh&lt;/button&gt;
 
-&lt;form id="comment-form"&gt;
 &lt;!-- ... --&gt;
 </code></pre>
 
@@ -90,14 +91,10 @@ $(document).ready(function() {
 loadComments();
 $('#refresh-btn').click(loadComments);
 
-$('#comment-form').submit(function() {
-
 // ...
 </code></pre>
 
 <p>Now test out the app by opening <code>index.html</code>. (You don't have to upload it to Deployd first, just run it from your filesystem) The app should now show the comment you entered in the Dashboard. </p>
-
-<p><img src="step2img/screenshot06.png" alt="Working app" title="" /></p>
 
 <h2>How it works</h2>
 
@@ -166,63 +163,3 @@ Status: 200 OK
 <p>If you load the page now, you should be able to submit a comment that appears even after you refresh. Also, if you forget to enter a name (or a comment), you will receive an error message.</p>
 
 <p>This would be a good time to reupload your HTML and JavaScript to your Files resource so that the latest version is on the server.</p>
-
-<p>Your <code>script.js</code> should look like this now:</p>
-
-<pre><code>function url(path) {
-  return 'http://[MYAPP].deploydapp.com' + path;
-}
-
-function showError(xhr) {
-  alert(xhr.responseText);
-}
-
-$(document).ready(function() {
-
-  loadComments();
-  $('#refresh-btn').click(loadComments);
-
-  $('#comment-form').submit(function() {
-    //Get the data from the form
-    var name = $('#name').val();
-    var comment = $('#comment').val();
-
-    $.ajax(url('/comments'), {
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        name: name,
-        comment: comment
-      }),
-      success: function(result) {
-        addComment(result);
-
-        $('#name').val('');
-        $('#comment').val('');
-      },
-      error: showError
-    });
-
-    return false;
-  });
-
-  function addComment(comment) {
-    $('&lt;div class="comment"&gt;')
-      .append('&lt;div class="author"&gt;Posted by: ' + comment.name + '&lt;/div&gt;')
-      .append('&lt;p&gt;' + comment.comment + '&lt;/p&gt;')
-      .appendTo('#comments')
-    ;
-  }
-
-  function loadComments() {
-    $.get(url('/comments'), function(result) { //Use jQuery AJAX to send a request to the server
-      var result = result || []; //If it's null, replace with an empty array
-      $('#comments').empty(); //Empty the collection
-      result.forEach(function(comment) { //Loop through the result
-        addComment(comment); //Add it to the array.
-      });
-    });
-  }
-
-});
-</code></pre>
