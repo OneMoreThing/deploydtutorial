@@ -7,21 +7,23 @@ Of course, JavaScript is a client-side language, so you can't just save data - y
 
 ## Creating a Collection
 
-Go to the dashboard and add a new **Collection** resource. Name it `/comments`.
+Go to the dashboard. If you are still on the Files view, click on the "Resources" tab to go back to the main screen. 
 
-![New resource](step2img/screenshot01.png)
+![Back to Resources](step2img/screenshot01.png)
 
-![Collection resource](step2img/screenshot02.png)
+Add a new **Collection** resource. Name it `/comments`.
+
+![New resource](step2img/screenshot02.png)
+
+![Collection resource](step2img/screenshot03.png)
 
 In order to use a collection, you have to define what its objects will look like. In this app, you have to a save a name and a comment, which are both text. 
 
 Drag a **string** onto the Properties panel, just like adding a resource. Call it `name`. Leave "Optional" unchecked.
 
-![Adding a property](step2img/screenshot03.png)
+![Adding a property](step2img/screenshot04.png)
 
 Do the same thing to add another string called `comment`. Notice that the grid on the bottom of the screen has updated to include those properties.
-
-![Final schema](step2img/screenshot04.png)
 
 Click the "Add" button on the grid. Type in a name and comment, then click "done".
 
@@ -66,7 +68,7 @@ Inside your `$(document).ready` callback, add a `loadComments()` function and ca
       }
     });
 
-Notice that you don't have to use a special SDK to retreive data from a Deployd server. This tutorial uses jQuery to make things simpler, but you can use a standard XMLHTTPRequest object in vanilla JavaScript with the same effect.
+Notice that you don't have to use a special SDK to retreive data from a Deployd server. This tutorial uses jQuery to make things simpler, but you can use any method making AJAX requests. In fact, you could create an iPhone, Android, or other mobile app that uses the same routes!
 
 If you'd like, add a "Refresh" button to the app, too:
 
@@ -78,7 +80,6 @@ If you'd like, add a "Refresh" button to the app, too:
 
     <button id="refresh-btn">Refresh</button>
 
-    <form id="comment-form">
     <!-- ... -->
 
 `script.js`:
@@ -88,13 +89,9 @@ If you'd like, add a "Refresh" button to the app, too:
     loadComments();
     $('#refresh-btn').click(loadComments);
 
-    $('#comment-form').submit(function() {
-
     // ...
 
 Now test out the app by opening `index.html`. (You don't have to upload it to Deployd first, just run it from your filesystem) The app should now show the comment you entered in the Dashboard. 
-
-![Working app](step2img/screenshot06.png)
 
 ## How it works
 
@@ -158,62 +155,3 @@ To save data to a Deployd collection, you send a `POST` request to the same URL.
 If you load the page now, you should be able to submit a comment that appears even after you refresh. Also, if you forget to enter a name (or a comment), you will receive an error message.
 
 This would be a good time to reupload your HTML and JavaScript to your Files resource so that the latest version is on the server.
-
-Your `script.js` should look like this now:
-
-    function url(path) {
-      return 'http://[MYAPP].deploydapp.com' + path;
-    }
-
-    function showError(xhr) {
-      alert(xhr.responseText);
-    }
-
-    $(document).ready(function() {
-
-      loadComments();
-      $('#refresh-btn').click(loadComments);
-
-      $('#comment-form').submit(function() {
-        //Get the data from the form
-        var name = $('#name').val();
-        var comment = $('#comment').val();
-
-        $.ajax(url('/comments'), {
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            name: name,
-            comment: comment
-          }),
-          success: function(result) {
-            addComment(result);
-            
-            $('#name').val('');
-            $('#comment').val('');
-          },
-          error: showError
-        });
-
-        return false;
-      });
-
-      function addComment(comment) {
-        $('<div class="comment">')
-          .append('<div class="author">Posted by: ' + comment.name + '</div>')
-          .append('<p>' + comment.comment + '</p>')
-          .appendTo('#comments')
-        ;
-      }
-
-      function loadComments() {
-        $.get(url('/comments'), function(result) { //Use jQuery AJAX to send a request to the server
-          var result = result || []; //If it's null, replace with an empty array
-          $('#comments').empty(); //Empty the collection
-          result.forEach(function(comment) { //Loop through the result
-            addComment(comment); //Add it to the array.
-          });
-        });
-      }
-
-    });

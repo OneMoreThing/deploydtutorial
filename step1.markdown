@@ -97,10 +97,8 @@ By using `/` as a resource name, Deployd will know that any request at the root 
 
 Click "save" once you have named the resource, then click on the resource to enter the detail view.
 
-![Empty Files screen](step1img/screenshot05.png)
-
 Click the "Add Files" button and navigate to the folder on your computer where you have saved your app. Select `index.html`, `style.css`, and `script.js`, then click OK.
 
-![Files screen after uploading](step1img/screenshot06.png)
+![Files screen after uploading](step1img/screenshot05.png)
 
 That's it! Your app is on the web. Click on `index.html` to test it out. Now anybody can access the app if you give them the link.

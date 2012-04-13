@@ -1,5 +1,5 @@
 function url(path) {
-  return 'http://localhost:2403' + path;
+  return 'http://[MYAPP].deploydapp.com' + path;
 }
 
 function showError(xhr) {

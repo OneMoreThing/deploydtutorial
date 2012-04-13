@@ -11,7 +11,7 @@ Go to the dashboard, click on your `/comments` collection, and go to the "POST" 
 Enter the following code:
 
     if (this.comment.indexOf('pizza') !== -1) {
-      error('comment', "You're making me hungry")
+      error('comment', "You're making me hungry");
     }
 
     if (this.name === 'Frank') {
@@ -26,12 +26,12 @@ To see this in action, try submitting a comment to your app that contains the wo
 
 Errors are returned as JSON, just like an object. In a full app, you could use this to place the error messages at intuitive places in your UI.
 
-Of course, you could post a comment and then edit it later to mention pizza. Add this code to the PUT event:
+Of course, you could post a comment and then edit it later to mention pizza. Add this code to the `PUT` event:
     
     protect('name');
 
     if (this.comment.indexOf('pizza') !== -1) {
-      error('comment', "You're making me hungry")
+      error('comment', "You're making me hungry");
     }
 
 The `protect()` method stops the client from changing that property. The app doesn't allow you to change the name in the UI, but remember that anybody can use the REST interface. To protect your users, you have to make sure that a REST client can't do anything that the app itself can't do.
@@ -65,7 +65,12 @@ You should now see the age column updated in real-time on the data table.
 
 ![Updating age property](step4img/screenshot03.png)
 
-You can use this on the front end, too:
+You should also add the following to your `PUT` event, for security:
+
+    protect('timestamp');
+    protect('age');
+
+You can use this new property on the front end:
 
     function addComment(comment)) {
       //...
@@ -82,108 +87,3 @@ You can use this on the front end, too:
 
 ![Showing age on comments](step4img/screenshot04.png)
 
-You should also add the following to your `PUT` event, for security:
-
-    protect('timestamp');
-    protect('age');
-
-With those updates, your script.js should look like this:
-
-    function url(path) {
-      return 'http://localhost:2403' + path;
-    }
-
-    function showError(xhr) {
-      alert(xhr.responseText);
-    }
-
-    $(document).ready(function() {
-
-      loadComments();
-      $('#refresh-btn').click(loadComments);
-
-      $('#comment-form').submit(function() {
-        //Get the data from the form
-        var name = $('#name').val();
-        var comment = $('#comment').val();
-
-        $.ajax(url('/comments'), {
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            name: name,
-            comment: comment
-          }),
-          success: function(result) {
-            addComment(result);
-            
-            $('#name').val('');
-            $('#comment').val('');
-          },
-          error: showError
-        });
-
-        return false;
-      });
-
-      function addComment(comment) {
-        var editLink = $('<a href="#">edit</a>');
-        var deleteLink = $('<a href="#">delete</a>');
-
-        var div = $('<div class="comment">')
-          .append($('<div class="links">').append(editLink).append(deleteLink))
-          .append('<div class="author">Posted by: ' + comment.name + '</div>')
-          .append('<p>' + comment.comment + '</p>')
-          .appendTo('#comments')
-        ;
-
-        if (comment.age < 100) {
-          div.append('<div class="author">' + comment.age.toFixed(0) + ' seconds ago</div>');
-        } else {
-          var date = new Date(comment.timestamp).toLocaleDateString();
-          div.append('<div class="author">on ' + date + '</div>');  
-        }
-        
-
-        deleteLink.click(function() {
-          $.ajax(url('/comments/' + comment._id), {
-            type: "DELETE",
-            success: function() {
-              div.remove();
-            },
-            error: showError
-          });
-
-          return false;
-        });
-
-        editLink.click(function() {
-          var newComment = prompt("Enter the new comment text:", comment.comment);
-          $.ajax(url('/comments/' + comment._id), {
-            type: "PUT",
-            contentType: "application/json",
-            data: JSON.stringify({
-              name: comment.name,
-              comment: newComment
-            }),
-            success: function(result) {
-              div.find('p').text(result.comment);
-            },
-            error: showError
-          });
-
-          return false;
-        });
-      }
-
-      function loadComments() {
-        $.get(url('/comments'), function(result) { //Use jQuery AJAX to send a request to the server
-          var result = result || []; //If it's null, replace with an empty array
-          $('#comments').empty(); //Empty the collection
-          result.forEach(function(comment) { //Loop through the result
-            addComment(comment); //Add it to the array.
-          });
-        });
-      }
-
-    });
