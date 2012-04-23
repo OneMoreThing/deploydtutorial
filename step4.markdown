@@ -4,11 +4,11 @@ The comment app has a major problem: you can submit pretty much anything as a co
 
 Deployd allows you to write event handlers for collection data in JavaScript. You can use these events for validation, calculation, and security. 
 
-Go to the dashboard, click on your `/comments` collection, and go to the "POST" tab in the "Events" panel. 
+Go to the dashboard, click on your `/comments` collection, and go the "Events" tab.
 
 ![Events panel](step4img/screenshot01.png)
 
-Enter the following code:
+Enter the following code for "On POST":
 
     if (this.comment.indexOf('pizza') !== -1) {
       error('comment', "You're making me hungry");
@@ -34,11 +34,11 @@ Of course, you could post a comment and then edit it later to mention pizza. Add
       error('comment', "You're making me hungry");
     }
 
-The `protect()` method stops the client from changing that property. The app doesn't allow you to change the name in the UI, but remember that anybody can use the REST interface. To protect your users, you have to make sure that a REST client can't do anything that the app itself can't do.
+The `protect()` method stops the client from changing that property. The app doesn't allow you to change the name in the UI, but remember that anybody can use the REST interface. To protect your users, you have to make sure that a REST client can't do anything that your app itself can't do.
 
 ## Automatic properties
 
-It would be nice to show how old a comment is. Add an **Optional** **number** property to the `/comments` collection and call it `timestamp`. Add the following to your `POST` event:
+It would be nice to show how old a comment is. Add an **Optional** **number** property to the `/comments` collection and call it `timestamp`. Add the following to your `On POST` event:
 
     this.timestamp = new Date().getTime();
 
@@ -61,9 +61,7 @@ Maybe you'd rather show how old the comment is, rather than the date it was post
 
     this.age = (new Date() - this.timestamp) / 1000;
 
-You should now see the age column updated in real-time on the data table.
-
-![Updating age property](step4img/screenshot03.png)
+If you go to the Data table, you should see this property updating in real time.
 
 You should also add the following to your `PUT` event, for security:
 

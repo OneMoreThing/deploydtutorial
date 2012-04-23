@@ -4,7 +4,9 @@ This app allows users to edit and delete comments, but there's no security - any
 
 In the dashboard, create a new **Users Collection**; leave it at its default name of `/users`. Edit the collection and add a single **string** called `name`. Notice that the Users Collection comes with the `email` and `password` properties.
 
-Add a call to `cancel("Not yet supported")` in the `PUT` and `DELETE` events. The `cancel()` function causes a request to halt with a specified error message. This is useful for security. In this case, there is no UI to edit or delete users, so you don't want that to be available over the REST API.
+Add a call to `cancel("Not yet supported")` in the `On PUT` and `On DELETE` events. 
+
+The `cancel()` function causes a request to halt with a specified error message. This is useful for security. In this case, there is no UI to edit or delete users, so you don't want that to be available over the REST API.
 
 On the front-end, you'll have to create a new page to allow users to register. Add `register.html`:
 
@@ -181,7 +183,7 @@ Finally, add a log out event handler that POSTs to `users/logout`:
       return false;
     });
 
-**NOTE**: A web page on the filesystem will not hold a session. You won't be able to test this version of the app until you upload it to Deployd. Alternatively, an advanced user can set up a simple server to serve the files as *localhost*.
+**NOTE**: If you are using Google Chrome to test your app, it will not store cookies when you open it from your computer (when the URL starts with "file://"). You could upload the files to Deployd and test the app online, or you can run Chrome with the command line option `--enable-file-cookies`.
 
 ## Security with users
 

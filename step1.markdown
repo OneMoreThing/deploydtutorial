@@ -1,6 +1,6 @@
 # Step 1 - Uploading your app to Deployd
 
-Start by creating an HTML page. Call it `index.html`:
+Start by creating an HTML page in your favorite text editor. Call it `index.html`:
   
     <!DOCTYPE html>
     <html>
@@ -82,11 +82,7 @@ Open up the page in your browser to test it. Enter a name and comment, then clic
 
 At this point, you've got a working web app. It would be nice to upload it to the web so that other people can see it. 
 
-Go into your Deployd app Dashboard:
-
-![Empty dashboard](step1img/screenshot02.png)
-
-Your Deployd app is made of *Resources*. These resources could be a collection of saved data, a list of users, or static files. Right now we want our server to host files, so drag a "Files" resource onto your app:
+Go into your Deployd app Dashboard. Your Deployd app is made of *Resources*. These resources could be a collection of saved data, a list of users, or static files. Right now we want our server to host files, so drag a "Files" resource onto your app:
 
 ![Adding a resource](step1img/screenshot03.png)
 
@@ -97,7 +93,7 @@ By using `/` as a resource name, Deployd will know that any request at the root 
 
 Click "save" once you have named the resource, then click on the resource to enter the detail view.
 
-Click the "Add Files" button and navigate to the folder on your computer where you have saved your app. Select `index.html`, `style.css`, and `script.js`, then click OK.
+Click the "Quick Upload Files" button and navigate to the folder on your computer where you have saved your app. Select `index.html`, `style.css`, and `script.js`, then click OK.
 
 ![Files screen after uploading](step1img/screenshot05.png)
 

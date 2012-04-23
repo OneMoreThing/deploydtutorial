@@ -15,17 +15,17 @@ Add a new **Collection** resource. Name it `/comments`.
 
 ![New resource](step2img/screenshot02.png)
 
-![Collection resource](step2img/screenshot03.png)
-
 In order to use a collection, you have to define what its objects will look like. In this app, you have to a save a name and a comment, which are both text. 
 
-Drag a **string** onto the Properties panel, just like adding a resource. Call it `name`. Leave "Optional" unchecked.
+Make sure **string** (<i class="icon-font"></i>) is selected as the type, and type in `name`. Leave "Optional" unchecked and click "add".
 
 ![Adding a property](step2img/screenshot04.png)
 
-Do the same thing to add another string called `comment`. Notice that the grid on the bottom of the screen has updated to include those properties.
+Do the same thing to add another **string** called `comment`.
 
-Click the "Add" button on the grid. Type in a name and comment, then click "done".
+![All properties](step2img/screenshot05.png)
+
+On the navigation sidebar, click "Data". Click the "Add" button on the grid that appears. Type in a name and comment, then click "save".
 
 ![Adding data from the dashboard](step2img/screenshot05.png)
 
