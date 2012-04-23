@@ -4,7 +4,9 @@
 
 <p>In the dashboard, create a new <strong>Users Collection</strong>; leave it at its default name of <code>/users</code>. Edit the collection and add a single <strong>string</strong> called <code>name</code>. Notice that the Users Collection comes with the <code>email</code> and <code>password</code> properties.</p>
 
-<p>Add a call to <code>cancel("Not yet supported")</code> in the <code>PUT</code> and <code>DELETE</code> events. The <code>cancel()</code> function causes a request to halt with a specified error message. This is useful for security. In this case, there is no UI to edit or delete users, so you don't want that to be available over the REST API.</p>
+<p>Add a call to <code>cancel("Not yet supported")</code> in the <code>On PUT</code> and <code>On DELETE</code> events. </p>
+
+<p>The <code>cancel()</code> function causes a request to halt with a specified error message. This is useful for security. In this case, there is no UI to edit or delete users, so you don't want that to be available over the REST API.</p>
 
 <p>On the front-end, you'll have to create a new page to allow users to register. Add <code>register.html</code>:</p>
 
@@ -190,7 +192,7 @@ function showUser(user) {
 });
 </code></pre>
 
-<p><strong>NOTE</strong>: A web page on the filesystem will not hold a session. You won't be able to test this version of the app until you upload it to Deployd. Alternatively, an advanced user can set up a simple server to serve the files as <em>localhost</em>.</p>
+<p><strong>NOTE</strong>: If you are using Google Chrome to test your app, it will not store cookies when you open it from your computer (when the URL starts with "file://"). You could upload the files to Deployd and test the app online, or you can run Chrome with the command line option <code>--enable-file-cookies</code>.</p>
 
 <h2>Security with users</h2>
 

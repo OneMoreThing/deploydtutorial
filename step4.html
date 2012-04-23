@@ -4,11 +4,11 @@
 
 <p>Deployd allows you to write event handlers for collection data in JavaScript. You can use these events for validation, calculation, and security. </p>
 
-<p>Go to the dashboard, click on your <code>/comments</code> collection, and go to the "POST" tab in the "Events" panel. </p>
+<p>Go to the dashboard, click on your <code>/comments</code> collection, and go the "Events" tab.</p>
 
 <p><img src="step4img/screenshot01.png" alt="Events panel" title="" /></p>
 
-<p>Enter the following code:</p>
+<p>Enter the following code for "On POST":</p>
 
 <pre><code>if (this.comment.indexOf('pizza') !== -1) {
   error('comment', "You're making me hungry");
@@ -37,11 +37,11 @@ if (this.comment.indexOf('pizza') !== -1) {
 }
 </code></pre>
 
-<p>The <code>protect()</code> method stops the client from changing that property. The app doesn't allow you to change the name in the UI, but remember that anybody can use the REST interface. To protect your users, you have to make sure that a REST client can't do anything that the app itself can't do.</p>
+<p>The <code>protect()</code> method stops the client from changing that property. The app doesn't allow you to change the name in the UI, but remember that anybody can use the REST interface. To protect your users, you have to make sure that a REST client can't do anything that your app itself can't do.</p>
 
 <h2>Automatic properties</h2>
 
-<p>It would be nice to show how old a comment is. Add an <strong>Optional</strong> <strong>number</strong> property to the <code>/comments</code> collection and call it <code>timestamp</code>. Add the following to your <code>POST</code> event:</p>
+<p>It would be nice to show how old a comment is. Add an <strong>Optional</strong> <strong>number</strong> property to the <code>/comments</code> collection and call it <code>timestamp</code>. Add the following to your <code>On POST</code> event:</p>
 
 <pre><code>this.timestamp = new Date().getTime();
 </code></pre>
@@ -67,9 +67,7 @@ if (this.comment.indexOf('pizza') !== -1) {
 <pre><code>this.age = (new Date() - this.timestamp) / 1000;
 </code></pre>
 
-<p>You should now see the age column updated in real-time on the data table.</p>
-
-<p><img src="step4img/screenshot03.png" alt="Updating age property" title="" /></p>
+<p>If you go to the Data table, you should see this property updating in real time.</p>
 
 <p>You should also add the following to your <code>PUT</code> event, for security:</p>
 
