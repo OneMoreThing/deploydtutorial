@@ -76,25 +76,22 @@ Finally, add some jQuery to allow users to add comments in `script.js`. Take a m
 
 Open up the page in your browser to test it. Enter a name and comment, then click the "Add New Comment" button.
   
-![App preview](step1img/screenshot01.png)
+![App preview](step1img/app-preview.png)
 
 ## Uploading your app to Deployd
 
 At this point, you've got a working web app. It would be nice to upload it to the web so that other people can see it. 
 
-Go into your Deployd app Dashboard. Your Deployd app is made of *Resources*. These resources could be a collection of saved data, a list of users, or static files. Right now we want our server to host files, so drag a "Files" resource onto your app:
+Go into your Deployd app Dashboard. Your Deployd app is made of *Resources*. Every Deployd app has a **Files** resource by default, which lets you upload static HTML, JavaScript, CSS, images, and other files to the web. Later, we will add resources to save and load data. Right now, we just want to use the Files resource, so click on it in the Dashboard:
 
-![Adding a resource](step1img/screenshot03.png)
+![Finding Files](step1img/files-resource.png)
 
-Name your resource `/`. Deployd uses these resource names to identify which resource should serve a request. If you left it at the default name `/my-files`, you would have to use that path to request a file (i.e. `http://myapp.deploydapp.com/my-files/index.html`). 
-By using `/` as a resource name, Deployd will know that any request at the root URL of your app is a file. (i.e. `http://myapp.deploydapp.com/index.html`)
+Click the "Upload" button at the bottom of the screen and navigate to the folder on your computer where you have saved your app. Select `index.html`, `style.css`, and `script.js`, then click OK.
 
-![Naming a resource](step1img/screenshot04.png)
+![Files screen after uploading](step1img/files-uploaded.png)
 
-Click "save" once you have named the resource, then click on the resource to enter the detail view.
+That's it! Your app is on the web. Click on `index.html`'s "View" button to test it out. Now anybody can access the app if you give them the link.
 
-Click the "Quick Upload Files" button and navigate to the folder on your computer where you have saved your app. Select `index.html`, `style.css`, and `script.js`, then click OK.
+## Set up local sync (Optional)
 
-![Files screen after uploading](step1img/screenshot05.png)
-
-That's it! Your app is on the web. Click on `index.html` to test it out. Now anybody can access the app if you give them the link.
+For apps with a more complex folder structure, uploading files manually might become a hassle. Deployd offers a command line tool for simply uploading and downloading your app's files. Click on the "Setup Local Sync" button for instructions to install and use the tool.
