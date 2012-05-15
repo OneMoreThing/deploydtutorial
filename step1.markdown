@@ -10,83 +10,84 @@ Start by opening your Deployd app Dashboard. Your Deployd app is made of *Resour
 
 Click on the "+ File" button. Call the file `index.html`. Paste the following in the Dashboard text editor:
 	
-		<!DOCTYPE html>
-		<html>
-		<head>
-			<title>Deployd Tutorial</title>
-			<link href="style.css" rel="stylesheet" type="text/css"/>
-		</head>
-		<body>
-			<div class="container">
-				<div id="comments">
-				</div>
-				<form id="comment-form">
-					<div class="form-element">
-						<label for="name">Name: </label>
-						<input type="text" id="name" name="name" />
-					</div>
-					<div class="form-element">
-						<textarea id="comment" name="comment" rows="5" cols="50"></textarea>
-					</div>
-					<div class="form-element">
-						<button type="submit">Add New Comment</button>
-					</div>
-				</form>
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Deployd Tutorial</title>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div id="comments">
 			</div>
-			
-			<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-			<script type="text/javascript" src="script.js"></script>
-		</body>
-		</html>
+			<form id="comment-form">
+				<div class="form-element">
+					<label for="name">Name: </label>
+					<input type="text" id="name" name="name" />
+				</div>
+				<div class="form-element">
+					<textarea id="comment" name="comment" rows="5" cols="50"></textarea>
+				</div>
+				<div class="form-element">
+					<button type="submit">Add New Comment</button>
+				</div>
+			</form>
+		</div>
+		
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+	</body>
+	</html>
 
 Click "Save" or press Ctrl/Cmd-S, then click "Back" to go back to the Files view.
 
 So that this demo will be easier on the eyes, include a simple stylesheet as well. Create a new file and call it `style.css`:
 
-		body { font-size: 16pt; }
-		.container { width: 960px; margin-left: auto; margin-right: auto; }
-		form { border: #cccccc 1px solid; padding: 20px; margin-bottom: 10px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
-		.form-element { margin-bottom: 10px; }
-		#refresh-btn { margin-bottom: 20px; }
-		.comment { padding: 10px; margin-bottom: 10px; border-bottom: #cccccc 1px solid; }
-		.comment .links { float: right; }
-		.comment .links a { margin-left: 10px; }
-		.comment .author { font-style: italic; }
+	body { font-size: 16pt; }
+	.container { width: 960px; margin-left: auto; margin-right: auto; }
+	form { border: #cccccc 1px solid; padding: 20px; margin-bottom: 10px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
+	.form-element { margin-bottom: 10px; }
+	#refresh-btn { margin-bottom: 20px; }
+	.comment { padding: 10px; margin-bottom: 10px; border-bottom: #cccccc 1px solid; }
+	.comment .links { float: right; }
+	.comment .links a { margin-left: 10px; }
+	.comment .author { font-style: italic; }
 
 Finally, add some jQuery to allow users to add comments. Create a new file called `script.js`. Take a moment to understand how this works; you will build on this in later steps.
 
-		$(document).ready(function() {
+	$(document).ready(function() {
 
-			$('#comment-form').submit(function() {
-				//Get the data from the form
-				var name = $('#name').val();
-				var comment = $('#comment').val();
+		$('#comment-form').submit(function() {
+			//Get the data from the form
+			var name = $('#name').val();
+			var comment = $('#comment').val();
 
-				//Clear the form elements
-				$('#name').val('');
-				$('#comment').val('');
+			//Clear the form elements
+			$('#name').val('');
+			$('#comment').val('');
 
-				addComment({
-					name: name,
-					comment: comment
-				});
-
-				return false;
+			addComment({
+				name: name,
+				comment: comment
 			});
 
-			function addComment(comment) {
-				$('<div class="comment">')
-					.append('<div class="author">Posted by: ' + comment.name + '</div>')
-					.append('<p>' + comment.comment + '</p>')
-					.appendTo('#comments')
-				;
-			}
-
+			return false;
 		});
+
+		function addComment(comment) {
+			$('<div class="comment">')
+				.append('<div class="author">Posted by: ' + comment.name + '</div>')
+				.append('<p>' + comment.comment + '</p>')
+				.appendTo('#comments');
+		}
+
+	});
+
+![Files screen after uploading](step1img/files-uploaded.png)
 
 Click the "View" button next to `index.html` to test your app. Enter a name and comment, then click the "Add New Comment" button.
 
-![Files screen after uploading](step1img/files-uploaded.png)
+
 
 That's it! Your app is on the web. Now anybody can access it if you give them the link.
 

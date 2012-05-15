@@ -8,13 +8,13 @@ Go to the dashboard, click on your `/comments` collection, and go the "Events" t
 
 Enter the following code for "On Validate":
 
-    if (this.comment.indexOf('Mordor') !== -1) {
-      error('comment', "One does not simply comment about Mordor.");
-    }
+	if (this.comment.indexOf('Mordor') !== -1) {
+		error('comment', "One does not simply comment about Mordor.");
+	}
 
-    if (this.name === 'Frank') {
-      error('name', "Stop spamming my app, Frank!");
-    }
+	if (this.name === 'Frank') {
+		error('name', "Stop spamming my app, Frank!");
+	}
 
 In a Collection event, the `this` object represents the current object. You can use it to access properties.
 
@@ -22,16 +22,16 @@ The `error()` function creates a validation error. It will stop the object from 
 
 To see this in action, try submitting a comment to your app that contains the word "Mordor" or is submitted by "Frank". You should see the following error message:
 
-    comment: One does not simply comment about Mordor.
-    name: Stop spamming my app, Frank!
+	comment: One does not simply comment about Mordor.
+	name: Stop spamming my app, Frank!
 
 These errors are the same format as the default "required" errors you saw in Step 2.
 
 When building an app, remember that its REST interface will allow anybody with knowledge of HTTP to read and modify data. This can't be prevented - it's just how the web works. However, you should always make sure that the REST interface will not allow anything that can't be done in the UI.
 
 For example, our app allows us to update the comment body, but not the name. You can prevent REST clients from modifying the name as well by adding this code to the `On PUT` event:
-    
-    protect('name');
+		
+	protect('name');
 
 The `protect()` method stops the client from changing that property.
 
@@ -39,18 +39,18 @@ The `protect()` method stops the client from changing that property.
 
 It would be nice to show how old a comment is. Add an **Optional** **date** property to the `/comments` collection and call it `timestamp`. Add the following to your `On POST` event:
 
-    this.timestamp = new Date();
+	this.timestamp = new Date();
 
 If you add a comment now in the data table, you should see a long number appear in the "timestamp" column. You can use this in the front-end Javascript:
 
-    function addComment(comment)) {
-      //...
+	function addComment(comment)) {
+		//...
 
-      var date = new Date(comment.timestamp).toLocaleDateString();
-      div.append('<div class="author">on ' + date + '</div>');
+		var date = new Date(comment.timestamp).toLocaleDateString();
+		div.append('<div class="author">on ' + date + '</div>');
 
-      // ...
-    }
+		// ...
+	}
 
 **NOTE**: Any comments that were created before this step will show "Invalid Date". This is normal; the timestamp property is undefined on those objects because it was never set when they were created.
 
@@ -58,29 +58,29 @@ If you add a comment now in the data table, you should see a long number appear 
 
 Maybe you'd rather show how old the comment is, rather than the date it was posted, if it's relatively new. Add a new **Optional** **number** property to the collection and call it `age`. Add the following to your `On GET` event:
 
-    this.age = (new Date() - new Date(this.timestamp)) / 1000;
+	this.age = (new Date() - new Date(this.timestamp)) / 1000;
 
 This will calculate the seconds since the comment was posted. If you go to the Data table, you should see this property updating in real time.
 
 You should also add the following to your `On PUT` event, for security:
 
-    protect('timestamp');
-    protect('age');
+	protect('timestamp');
+	protect('age');
 
 You can use this new property on the front end:
 
-    function addComment(comment)) {
-      //...
+	function addComment(comment)) {
+		//...
 
-      if (comment.age && comment.age < 100) {
-        div.append('<div class="author">' + comment.age.toFixed(0) + ' seconds ago</div>');
-      } else {
-        var date = new Date(comment.timestamp).toLocaleDateString();
-        div.append('<div class="author">on ' + date + '</div>');  
-      }
+		if (comment.age && comment.age < 100) {
+			div.append('<div class="author">' + comment.age.toFixed(0) + ' seconds ago</div>');
+		} else {
+			var date = new Date(comment.timestamp).toLocaleDateString();
+			div.append('<div class="author">on ' + date + '</div>');  
+		}
 
-      //...
-    }
+		//...
+	}
 
 ![Showing age on comments](step4img/age-on-comments.png)
 
