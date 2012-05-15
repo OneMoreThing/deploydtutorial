@@ -1,144 +1,133 @@
-$(document).ready(function() {
-
-  var currentUser = null;
-  checkLogin();
-
-  loadComments();
-  $('#refresh-btn').click(loadComments);
-
-  $('#login-form').submit(function() {
-    var login = {
-      email: $('#email').val(),
-      password: $('#password').val()
-    };
-
-    $.ajax(url('/users/login'), {
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify(login),
-      success: function(result) {
-        showUser(result.user);
-      },  
-      error: showError
-    });
-
-    return false;
-  });
-
-  $('#comment-form').submit(function() {
-    var comment = $('#comment').val();
-
-    $.ajax(url('/comments'), {
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        comment: comment
-      }),
-      success: function(result) {
-        addComment(result);
-        
-        $('#comment').val('');
-      },
-      error: showError
-    });
-
-    return false;
-  });
-
-  $('#logout-btn').click(function() {
-    $.ajax(url('/users/logout'), {
-      type: "POST",
-      success: function() {
-        currentUser = null;
-        $('#login-form').show();
-        $('#greeting').hide();
-      },
-      error: showError
-    });
-
-    return false;
-  });
-
-  function addComment(comment) {
-    var editLink = $('<a href="#">edit</a>');
-    var deleteLink = $('<a href="#">delete</a>');
-
-    var div = $('<div class="comment">')
-      .append($('<div class="links">').append(editLink).append(deleteLink))
-      .append('<div class="author">Posted by: ' + comment.name + '</div>')
-      .append('<p>' + comment.comment + '</p>')
-      .appendTo('#comments')
-    ;
-
-    if (comment.age < 100) {
-      div.append('<div class="author">' + comment.age.toFixed(0) + ' seconds ago</div>');
-    } else {
-      var date = new Date(comment.timestamp).toLocaleDateString();
-      div.append('<div class="author">on ' + date + '</div>');  
+function showError(error) {
+    var message = "An error occured";
+    if (error.message) {
+        message = error.message;
+    } else if (error.errors) {
+        var errors = error.errors;
+        message = "";
+        Object.keys(errors).forEach(function(k) {
+            message += k + ": " + errors[k] + "\n";
+        });
     }
     
+    alert(message);
+}
 
-    deleteLink.click(function() {
-      $.ajax(url('/comments/' + comment._id), {
-        type: "DELETE",
-        success: function() {
-          div.remove();
-        },
-        error: showError
+$(document).ready(function() {
+    
+    var currentUser = null;
+    checkLogin();
+    
+    loadComments();
+    $('#refresh-btn').click(loadComments);
+
+    $('#comment-form').submit(function() {
+		//Get the data from the form
+		var name = $('#name').val();
+		var comment = $('#comment').val();
+        
+        dpd.comments.post({
+            name: name,
+            comment: comment
+        }, function(comment, error) {
+            if (error) return showError(error);
+            
+            addComment(comment);
+            $('#name').val('');
+            $('#comment').val('');
+        });
+
+		return false;
+	});
+    
+    $('#login-form').submit(function() {
+      var login = {
+        email: $('#email').val(),
+        password: $('#password').val()
+      };
+      
+      dpd.users.login(login, function(result, error) {
+        if (error) return showError(error);
+        showUser(result.user);
       });
 
       return false;
     });
+    
+    $('#logout-btn').click(function() {
+        dpd.users.logout(function(success, error) {
+            if (error) return showError(error);
+            currentUser = null;
+            $('#login-form').show();
+            $('#greeting').hide();
+        });
 
-    editLink.click(function() {
-      var newComment = prompt("Enter the new comment text:", comment.comment);
-      $.ajax(url('/comments/' + comment._id), {
-        type: "PUT",
-        contentType: "application/json",
-        data: JSON.stringify({
-          name: comment.name,
-          comment: newComment
-        }),
-        success: function(result) {
-          div.find('p').text(result.comment);
-        },
-        error: showError
-      });
-
-      return false;
+        return false;
     });
-  }
 
-  function loadComments() {
-    $.get(url('/comments'), function(result) { //Use jQuery AJAX to send a request to the server
-      var result = result || []; //If it's null, replace with an empty array
-      $('#comments').empty(); //Empty the collection
-      result.forEach(function(comment) { //Loop through the result
-        addComment(comment); //Add it to the array.
-      });
-    });
-  }
-
-  function checkLogin() {
-    $.ajax(url('/users/me'), {
-      type: "GET",
-      success: function (result) {
-        if (result) {
-          showUser(result);
+	function addComment(comment) {
+        var editLink = $('<a href="#">Edit</a>');
+        var deleteLink = $('<a href="#">Delete</a>');
+    
+        var div = $('<div class="comment">')
+            .append($('<div class="links">').append(editLink).append(deleteLink))
+            .append('<div class="author">Posted by: ' + comment.name + '</div>')
+            .append('<p>' + comment.comment + '</p>')
+            .appendTo('#comments');
+            
+        if (comment.age && comment.age < 100) {
+            div.append('<div class="author">' + comment.age.toFixed(0) + ' seconds ago</div>');
+        } else {
+            var date = new Date(comment.timestamp).toLocaleDateString();
+            div.append('<div class="author">on ' + date + '</div>');  
         }
-      },
-      error: function() {
-        currentUser = null;
-        $('#login-form').show();
-        $('#greeting').hide();
-      }
-    });
-  }
-
-  function showUser(user) {
-    currentUser = user;
-    $('#login-form').hide();
-    $('#greeting').show().find('h3').text("Welcome, " + user.name);
-  }
+            
+        deleteLink.click(function() {
+            dpd.comments.del(comment._id, function(success, error) {
+                if (error) return showError(error);
+                if (success) div.remove();
+            });
+            return false;
+        });
+        
+        editLink.click(function() {
+            var newComment = prompt("Enter the new comment text:", comment.comment);
+            if (newComment) {
+                dpd.comments.put(comment._id, {comment: newComment}, function(result, error) {
+                    if (error) { return showError(error); }
+                    comment = result;
+                    div.find('p').text(comment.comment);
+                });
+                return false;    
+            }
+        });
+    }
+    
+    function loadComments() {
+		dpd.comments.get(function(result, error) { //Use the Deployd SDK to send a request to the server
+		    $('#comments').empty(); //Empty the list
+			result.forEach(function(comment) { //Loop through the result
+				addComment(comment); //Add it to the DOM.
+			});
+		});
+	}
+    
+    function checkLogin() {
+        dpd.users.me(function(user, error) {
+            if (user) {
+                showUser(user);
+            } else {
+                currentUser = null;
+                $('#login-form').show();
+                $('#greeting').hide();
+            }
+        });
+    }
+    
+    function showUser(user) {
+      currentUser = user;
+      $('#login-form').hide();
+      $('#greeting').show().find('h3').text("Welcome, " + user.name);
+    }
 
 });

@@ -13,9 +13,26 @@ if (this.name === 'Frank') {
 }
 
 /* On POST */
+if (me) {
+    this.creator = me._id;
+    this.name = me.name;
+} else {
+    cancel("You must be logged in to post a comment", 401);
+}
+
 this.timestamp = new Date();
 
 /* On PUT */
+if  ( !me || me._id !== this.creator ) {
+    cancel("This is not your comment!", 401);
+}
+
+/* On DELETE */
+if  ( !me || me._id !== this.creator ) {
+  cancel("This is not your comment!", 401);
+}
+
+protect('creator');
 protect('name');
 protect('timestamp');
 protect('age');

@@ -1,24 +1,21 @@
 /* Paste these into your /comments collection: */
 
-/* GET */
-this.age = (new Date() - this.timestamp) / 1000;
+/* On GET */
+this.age = (new Date() - new Date(this.timestamp)) / 1000;
 
-/* POST */
-if (this.comment.indexOf('pizza') !== -1) {
-  error('comment', "You're making me hungry");
+/* On Validate */
+if (this.comment.indexOf('Mordor') !== -1) {
+    error('comment', "One does not simply comment about Mordor.");
 }
 
 if (this.name === 'Frank') {
-  error('name', "Stop spamming my app, Frank!");
+    error('name', "Stop spamming my app, Frank!");
 }
 
-this.timestamp = new Date().getTime();
+/* On POST */
+this.timestamp = new Date();
 
-/* PUT */
+/* On PUT */
 protect('name');
 protect('timestamp');
 protect('age');
-
-if (this.comment.indexOf('pizza') !== -1) {
-  error('comment', "You're making me hungry");
-}

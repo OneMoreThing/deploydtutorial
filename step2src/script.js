@@ -1,56 +1,57 @@
-function url(path) {
-  return 'http://localhost:2403' + path;
-}
-
-function showError(xhr) {
-  alert(xhr.responseText);
+function showError(error) {
+    var message = "An error occured";
+    if (error.message) {
+        message = error.message;
+    } else if (error.errors) {
+        var errors = error.errors;
+        message = "";
+        Object.keys(errors).forEach(function(k) {
+            message += k + ": " + errors[k] + "\n";
+        });
+    }
+    
+    alert(message);
 }
 
 $(document).ready(function() {
+    
+    loadComments();
+    $('#refresh-btn').click(loadComments);
 
-  loadComments();
-  $('#refresh-btn').click(loadComments);
-
-  $('#comment-form').submit(function() {
-    //Get the data from the form
-    var name = $('#name').val();
-    var comment = $('#comment').val();
-
-    $.ajax(url('/comments'), {
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        name: name,
-        comment: comment
-      }),
-      success: function(result) {
-        addComment(result);
+    $('#comment-form').submit(function() {
+		//Get the data from the form
+		var name = $('#name').val();
+		var comment = $('#comment').val();
         
-        $('#name').val('');
-        $('#comment').val('');
-      },
-      error: showError
-    });
+        dpd.comments.post({
+            name: name,
+            comment: comment
+        }, function(comment, error) {
+            if (error) return showError(error);
+            
+            addComment(comment);
+            $('#name').val('');
+            $('#comment').val('');
+        });
 
-    return false;
-  });
+		return false;
+	});
 
-  function addComment(comment) {
-    $('<div class="comment">')
-      .append('<div class="author">Posted by: ' + comment.name + '</div>')
-      .append('<p>' + comment.comment + '</p>')
-      .appendTo('#comments')
-    ;
-  }
-
-  function loadComments() {
-    $.get(url('/comments'), function(result) { //Use jQuery AJAX to send a request to the server
-      var result = result || []; //If it's null, replace with an empty array
-      $('#comments').empty(); //Empty the collection
-      result.forEach(function(comment) { //Loop through the result
-        addComment(comment); //Add it to the array.
-      });
-    });
-  }
+	function addComment(comment) {
+		$('<div class="comment">')
+			.append('<div class="author">Posted by: ' + comment.name + '</div>')
+			.append('<p>' + comment.comment + '</p>')
+			.appendTo('#comments')
+		;
+	}
+    
+    function loadComments() {
+		dpd.comments.get(function(result, error) { //Use the Deployd SDK to send a request to the server
+		    $('#comments').empty(); //Empty the list
+			result.forEach(function(comment) { //Loop through the result
+				addComment(comment); //Add it to the DOM.
+			});
+		});
+	}
 
 });

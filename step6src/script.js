@@ -15,27 +15,52 @@ function showError(error) {
 
 $(document).ready(function() {
     
+    var currentUser = null;
+    checkLogin();
+    
     loadComments();
     $('#refresh-btn').click(loadComments);
 
     $('#comment-form').submit(function() {
 		//Get the data from the form
-		var name = $('#name').val();
 		var comment = $('#comment').val();
         
         dpd.comments.post({
-            name: name,
             comment: comment
         }, function(comment, error) {
             if (error) return showError(error);
             
             addComment(comment);
-            $('#name').val('');
             $('#comment').val('');
         });
 
 		return false;
 	});
+    
+    $('#login-form').submit(function() {
+      var login = {
+        email: $('#email').val(),
+        password: $('#password').val()
+      };
+      
+      dpd.users.login(login, function(result, error) {
+        if (error) return showError(error);
+        showUser(result.user);
+      });
+
+      return false;
+    });
+    
+    $('#logout-btn').click(function() {
+        dpd.users.logout(function(success, error) {
+            if (error) return showError(error);
+            currentUser = null;
+            $('#login-form').show();
+            $('#greeting').hide();
+        });
+
+        return false;
+    });
 
 	function addComment(comment) {
         var editLink = $('<a href="#">Edit</a>');
@@ -46,6 +71,13 @@ $(document).ready(function() {
             .append('<div class="author">Posted by: ' + comment.name + '</div>')
             .append('<p>' + comment.comment + '</p>')
             .appendTo('#comments');
+            
+        if (comment.age && comment.age < 100) {
+            div.append('<div class="author">' + comment.age.toFixed(0) + ' seconds ago</div>');
+        } else {
+            var date = new Date(comment.timestamp).toLocaleDateString();
+            div.append('<div class="author">on ' + date + '</div>');  
+        }
             
         deleteLink.click(function() {
             dpd.comments.del(comment._id, function(success, error) {
@@ -76,5 +108,23 @@ $(document).ready(function() {
 			});
 		});
 	}
+    
+    function checkLogin() {
+        dpd.users.me(function(user, error) {
+            if (user) {
+                showUser(user);
+            } else {
+                currentUser = null;
+                $('#login-form').show();
+                $('#greeting').hide();
+            }
+        });
+    }
+    
+    function showUser(user) {
+      currentUser = user;
+      $('#login-form').hide();
+      $('#greeting').show().find('h3').text("Welcome, " + user.name);
+    }
 
 });
